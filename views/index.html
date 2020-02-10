@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo Vue App</title>
+    <!-- STYLES -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,600,700|Poppins:400,600&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined" rel="stylesheet">
+    <link rel="stylesheet" href="../dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../dist/css/animate.css">
+    <link rel="stylesheet" href="../dist/css/variables.css">
+    <link rel="stylesheet" href="../dist/css/material.css">
+    <!-- TODO Vue App following the tutorial from https://dev.to/hugoliconv/lets-build-a-todo-app-using-vuejs-52in-->
+</head>
+
+<body>
+
+    <div class="container mt-4">
+        <div id="app">
+        </div>
+    </div>
+
+    <!-- TEMPLATE TODO LIST -->
+    <template id="todo-list">
+        <div>
+            <!-- ADD NEW TASK -->
+            <div class="row justify-content-center wow fadeInDown" data-wow-delay="0.1s">
+                <div class="col-sm-12 col-md-6 col-lg-4 mb-3">
+                    <h3 class="font-weight-bold text-poppins text-center mb-3">Add new task:</h3>
+                    <div class="form-label-group">
+                        <input type="text" id="addTODOInput" class="form-control form-control-material-outline"
+                            v-on:keyup.enter="addTodo" placeholder="Add TODO">
+                        <label for="addTODOInput">Add TODO</label>
+                        <small class="text-muted">Press enter to add the task</small>
+                    </div>
+                </div>
+            </div>
+            <!-- END ADD NEW TASK -->
+            <!-- TASKS LIST -->
+            <div class="row">
+                <div class="col-6 wow fadeInUp" data-wow-delay="0.5s">
+                    <h3 class="font-weight-bold text-poppins mb-3">👨‍💻 {{title}}</h3>
+                </div>
+                <div class="col-6 text-right wow fadeInUp" data-wow-delay="0.5s">
+                    <router-link to="/full-width" class="btn btn-secondary mb-3">
+                        <i class="material-icons">view_stream</i>
+                        Minimal View</router-link>
+                </div>
+                <div class="col-md-12 wow fadeInUp" data-wow-delay="0.8s">
+                    <div class="card card-outline mb-3">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover table-borderless">
+                                    <tbody>
+                                        <tr v-for="todo in todos">
+                                            <td class="text-center">
+                                                <label class="checkbox">
+                                                    <input type="checkbox" name="checkboxOption" v-model="todo.done">
+                                                    <span class="checkmark-checkbox"></span>
+                                                </label>
+                                            </td>
+                                            <td v-if="todo.done" class="text-capitalize"><del>{{ todo.text }}</del></td>
+                                            <td v-else class="text-capitalize">{{ todo.text }}</td>
+                                            <td v-if="todo.done" class="text-capitalize text-center">
+                                                <div class="badge badge-success">Done</div>
+                                            </td>
+                                            <td v-else class="text-capitalize text-center">
+                                                <div class="badge badge-warning">Pending</div>
+                                            </td>
+                                            <td class="text-center">
+                                                <button class="btn btn-sm btn-danger-light"
+                                                    v-on:click="removeTodo(todo.id)">
+                                                    <i class="material-icons-outlined">delete</i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- TEMPLATE END TASKS LIST -->
+        </div>
+    </template>
+    <!-- END TODO LIST -->
+
+    <!-- TEMPLATE TODO FULL WIDTH -->
+    <template id="todo-full-width">
+        <div>
+            <section class="bg-header border-radius-8">
+            </section>
+            <div class="row mt-3">
+                <div class="col-6 mb-3 wow fadeInUp" data-wow-delay="0.5s">
+                    <h3 class="font-weight-bold text-poppins mb-3">👨‍💻 {{title}} <small>Minimal view</small></h3>
+                </div>
+                <div class="col-6 text-right mb-3 wow fadeInUp" data-wow-delay="0.5s">
+                    <router-link to="/" class="btn btn-secondary mb-3">
+                        <i class="material-icons">list</i>
+                        List View</router-link>
+                </div>
+                <div class="col-md-12">
+                    <div class="card card-1dp-elevation card-secondary mb-3 wow fadeInUp" data-wow-delay="0.8s"
+                        v-for="todo in todos">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-3 text-center">
+                                    <i v-if="todo.done" class="material-icons md-38 text-green">label_off</i>
+                                    <i v-else class="material-icons md-38 text-yellow">label</i>
+                                </div>
+                                <div class="col-6">
+                                    <h6 v-if="todo.done" class="font-weight-bold text-capitalize">
+                                        <del>{{ todo.text }}</del></h6>
+                                    <h6 v-else class="text-capitalize">{{ todo.text }}</h6>
+                                </div>
+                                <div class="col-3 text-center">
+                                    <label class="checkbox">
+                                        <input type="checkbox" name="checkboxOption" v-model="todo.done">
+                                        <span class="checkmark-checkbox"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div v-if="!todos.length">
+                        <h3 class="text-center font-weight-bold">You don't have any todo do list.</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+    <!-- TEMPLATE END TODO FULL WIDTH -->
+
+    <script src="../dist/js/jquery.min.js"></script>
+    <script src="../dist/js/popper.js"></script>
+    <script src="../dist/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+    <script src="../dist/js/wow.js"></script>
+    <script src="../dist/js/index.js"></script>
+    <script src="../dist/js/scripts.js"></script>
+</body>
+
+</html>
